@@ -17,9 +17,9 @@ public class AuthorizationService extends BaseService {
 			CredentialValidator.validate(name, password, fiscalNumber);
 			getWarehouseManager().addUser(name, password, fiscalNumber);
 		} catch (BusinessException e) {
-			return new BaseResponse(e.getCode().getCode());
+			return new BaseResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new BaseResponse(ErrorCode.CODE_AUTH.getCode());
+			return new BaseResponse(ErrorCode.CODE_AUTH.getValue());
 		}
 		return new BaseResponse();
 	}
@@ -34,10 +34,10 @@ public class AuthorizationService extends BaseService {
 				return new BaseResponse();
 			}
 		} catch (BusinessException e) {
-			return new BaseResponse(e.getCode().getCode());
+			return new BaseResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new BaseResponse(ErrorCode.CODE_AUTH.getCode());
+			return new BaseResponse(ErrorCode.CODE_AUTH.getValue());
 		}
-		return new BaseResponse(ErrorCode.CODE_AUTH.getCode());
+		return new BaseResponse(ErrorCode.CODE_AUTH.getValue());
 	}
 }

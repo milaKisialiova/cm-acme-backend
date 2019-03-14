@@ -33,9 +33,9 @@ public class PaymentService extends BaseService {
 					dbPayment.getReceipt());
 			updateCarts(dbCart); // TODO when error, show Info box, not Error box to user
 		} catch (BusinessException e) {
-			return new PaymentInfoResponse(e.getCode().getCode());
+			return new PaymentInfoResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new PaymentInfoResponse(ErrorCode.CODE_GENERAL.getCode());
+			return new PaymentInfoResponse(ErrorCode.CODE_GENERAL.getValue());
 		}
 		return rsp;
 	}
@@ -93,9 +93,9 @@ public class PaymentService extends BaseService {
 			DbCart dbCart = getWarehouseManager().getUserActiveCart(user);
 			getWarehouseManager().addCartItem(productId, number, dbCart.getId());
 		} catch (BusinessException e) {
-			return new BaseResponse(e.getCode().getCode());
+			return new BaseResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new BaseResponse(ErrorCode.CODE_GENERAL.getCode());
+			return new BaseResponse(ErrorCode.CODE_GENERAL.getValue());
 		}
 		return new BaseResponse();
 	}
@@ -109,9 +109,9 @@ public class PaymentService extends BaseService {
 			DbPayment dbPayment = getWarehouseManager().getPayment(token);
 			rsp = new ReceiptResponse(dbPayment.getReceipt());
 		} catch (BusinessException e) {
-			return new ReceiptResponse(e.getCode().getCode());
+			return new ReceiptResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new ReceiptResponse(ErrorCode.CODE_GENERAL.getCode());
+			return new ReceiptResponse(ErrorCode.CODE_GENERAL.getValue());
 		}
 		return rsp;
 	}

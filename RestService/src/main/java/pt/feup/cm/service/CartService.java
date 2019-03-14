@@ -43,9 +43,9 @@ public class CartService extends BaseService {
 				rsp.getItems().add(cartRsp);
 			}
 		} catch (BusinessException e) {
-			return new CartResponse(e.getCode().getCode());
+			return new CartResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new CartResponse(ErrorCode.CODE_GENERAL.getCode());
+			return new CartResponse(ErrorCode.CODE_GENERAL.getValue());
 		}
 		return rsp;
 	}
@@ -59,9 +59,9 @@ public class CartService extends BaseService {
 			DbCart dbCart = getWarehouseManager().getUserActiveCart(user);
 			getWarehouseManager().deleteCartItems(dbCart);
 		} catch (BusinessException e) {
-			return new BaseResponse(e.getCode().getCode());
+			return new BaseResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new BaseResponse(ErrorCode.CODE_GENERAL.getCode());
+			return new BaseResponse(ErrorCode.CODE_GENERAL.getValue());
 		}
 		return new BaseResponse();
 	}
@@ -78,9 +78,9 @@ public class CartService extends BaseService {
 					dbProduct.getDescription());
 			rsp = new CartItemResponse(productRsp, dbCartItem.getNumber());
 		} catch (BusinessException e) {
-			return new CartItemResponse(e.getCode().getCode());
+			return new CartItemResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new CartItemResponse(ErrorCode.CODE_GENERAL.getCode());
+			return new CartItemResponse(ErrorCode.CODE_GENERAL.getValue());
 		}
 		return rsp;
 	}
@@ -94,9 +94,9 @@ public class CartService extends BaseService {
 			DbCart dbCart = getWarehouseManager().getUserActiveCart(user);
 			getWarehouseManager().addCartItem(productId, number, dbCart.getId());
 		} catch (BusinessException e) {
-			return new BaseResponse(e.getCode().getCode());
+			return new BaseResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new BaseResponse(ErrorCode.CODE_GENERAL.getCode());
+			return new BaseResponse(ErrorCode.CODE_GENERAL.getValue());
 		}
 		return new BaseResponse();
 	}
@@ -108,9 +108,9 @@ public class CartService extends BaseService {
 		try {
 			getWarehouseManager().deleteCartItem(cartItemId);
 		} catch (BusinessException e) {
-			return new BaseResponse(e.getCode().getCode());
+			return new BaseResponse(e.getCode().getValue());
 		} catch (Exception e) {
-			return new BaseResponse(ErrorCode.CODE_GENERAL.getCode());
+			return new BaseResponse(ErrorCode.CODE_GENERAL.getValue());
 		}
 		return new BaseResponse();
 	}
