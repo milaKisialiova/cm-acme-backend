@@ -18,7 +18,7 @@ public class ProductService extends BaseService {
 			rsp = new ProductInfoResponse((int) product.getId(), product.getName(), product.getPrice(),
 					product.getDescription());
 		} catch (Exception e) {
-			return new ProductInfoResponse(ErrorCode.CODE_GENERAL.getCode());
+			return new ProductInfoResponse(ErrorCode.CODE_GENERAL.getValue());
 		}
 		return rsp;
 	}
