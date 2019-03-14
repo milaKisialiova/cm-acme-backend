@@ -1,6 +1,6 @@
 # cm-acme-backend
 
-REST API
+REST API:
 
 POST /rest/app/signup
 {"name":"Mila","fiscalNumber":"100000004","password":"Abc-123"}
