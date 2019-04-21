@@ -10,12 +10,17 @@ public class Product {
 	private String descrition;
 	// private byte[] image;
 
+	
 	public Product(Integer id, String name, BigDecimal price, String descrition) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.price = price;
 		this.descrition = descrition;
+	}
+
+	public Product() {
+		super();
 	}
 
 	public Integer getId() {

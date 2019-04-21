@@ -1,6 +1,8 @@
 package pt.feup.cm.rest;
 
+import org.apache.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +13,7 @@ import pt.feup.cm.entities.request.UserInfoRequest;
 import pt.feup.cm.entities.response.BaseResponse;
 import pt.feup.cm.entities.response.CartItemResponse;
 import pt.feup.cm.entities.response.CartResponse;
+import pt.feup.cm.entities.response.TokenResponse;
 import pt.feup.cm.entities.response.PaymentInfoResponse;
 import pt.feup.cm.entities.response.ProductInfoResponse;
 import pt.feup.cm.service.AuthorizationService;
@@ -28,12 +31,15 @@ public class AppRequestController {
 	private PaymentService paymentService = new PaymentService();
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
-	public BaseResponse signup(@RequestBody UserInfoRequest request) {
-		return authorizationService.signUp(request.getName(), request.getPassword(), request.getFiscalNumber());
+	public BaseResponse signUp(@RequestBody UserInfoRequest request) {
+		return authorizationService.signUp(request.getName(), request.getPassword(), request.getAddress(),
+				request.getFiscalNumber(), request.getCard().getHolderName(), request.getCard().getNumber(),
+				request.getCard().getValidity(), request.getCard().getValidDate(), request.getCard().getType(),
+				request.getPublicRsaKey());
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public BaseResponse login(@RequestBody UserInfoRequest request) {
+	public TokenResponse login(@RequestBody UserInfoRequest request) {
 		return authorizationService.login(request.getName(), request.getPassword());
 	}
 
@@ -43,48 +49,47 @@ public class AppRequestController {
 	}
 
 	@RequestMapping(value = "/cart", method = RequestMethod.GET)
-	//TODO no user id, get from User Session
-	public CartResponse getCart(@RequestParam(value = "id") Integer userId) {
-		return cartService.getCart(userId);
+	public CartResponse getCart(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
+		return cartService.getCart(token);
 	}
 
 	@RequestMapping(value = "/cart/clean", method = RequestMethod.DELETE)
-	//TODO no user id, get from User Session
-	public BaseResponse cleanActiveCart(@RequestParam(value = "id") Integer userId) {
-		return cartService.cleanCart(userId);
+	// TODO no user id, get from User Session
+	public BaseResponse cleanActiveCart(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
+		return cartService.cleanCart(token);
 	}
 
 	@RequestMapping(value = "/cart/item", method = RequestMethod.GET)
-	public CartItemResponse getCartItem(@RequestParam(value = "id") Integer cartItemId) {
-		return cartService.getCartItem(cartItemId);
+	public CartItemResponse getCartItem(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token,
+			@RequestParam(value = "id") Integer cartItemId) {
+		return cartService.getCartItem(token, cartItemId);
 	}
 
 	@RequestMapping(value = "/cart/item/add", method = RequestMethod.POST)
-	//TODO no user id, get from User Session
-	public BaseResponse addToCart(@RequestBody CartItemRequest request) {
-		return cartService.addToCart(request.getProductId(), request.getNumber(), request.getUserId());
+	public BaseResponse addToCart(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token,
+			@RequestBody CartItemRequest request) {
+		return cartService.addToCart(token, request.getProductId(), request.getNumber());
 	}
 
 	@RequestMapping(value = "/cart/item/delete", method = RequestMethod.DELETE)
-	public BaseResponse deleteFromCart(@RequestParam(value = "id") Integer cartItemId) {
-		return cartService.deleteFromCart(cartItemId);
+	public BaseResponse deleteFromCart(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token,
+			@RequestParam(value = "id") Integer cartItemId) {
+		return cartService.deleteFromCart(token, cartItemId);
 	}
 
 	@RequestMapping(value = "/payment/do", method = RequestMethod.GET)
-	//TODO no user id, get from User Session
-	public PaymentInfoResponse doPayment(@RequestParam(value = "id") Integer userId) {
-		return paymentService.doPayment(userId);
+	// TODO no user id, get from User Session
+	public PaymentInfoResponse doPayment(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
+		return paymentService.doPayment(token);
 	}
 
 	/*
-	@RequestMapping(value = "/payment/qrcode", method = RequestMethod.GET)
-	public PaymentInfoResponse getQrCode(@RequestParam(value = "id") Integer paymentId) {
-		return paymentService.getQrCode(paymentId);
-	}
-
-	@RequestMapping(value = "/payment/nfc", method = RequestMethod.GET)
-	public PaymentInfoResponse getNfc(@RequestParam(value = "id") Integer paymentId) {
-		return paymentService.getNfc(paymentId);
-	}
-	*/
+	 * @RequestMapping(value = "/payment/qrcode", method = RequestMethod.GET) public
+	 * PaymentInfoResponse getQrCode(@RequestParam(value = "id") Integer paymentId)
+	 * { return paymentService.getQrCode(paymentId); }
+	 * 
+	 * @RequestMapping(value = "/payment/nfc", method = RequestMethod.GET) public
+	 * PaymentInfoResponse getNfc(@RequestParam(value = "id") Integer paymentId) {
+	 * return paymentService.getNfc(paymentId); }
+	 */
 }

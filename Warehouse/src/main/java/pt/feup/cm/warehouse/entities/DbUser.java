@@ -29,14 +29,22 @@ public class DbUser {
 	@Column(name = "password")
 	private String password;
 
+	@Column(name = "address")
+	String address;
+	
+	@Column(name = "rsa")
+	String publicRsaKey;
+	
 	public DbUser() {
 	}
 
-	public DbUser(String name, String password, String fisNum) {
+	public DbUser(String name, String fisNum, String password, String address, String publicRsaKey) {
 		super();
 		this.name = name;
-		this.password = password;
 		this.fisNum = fisNum;
+		this.password = password;
+		this.address = address;
+		this.publicRsaKey = publicRsaKey;
 	}
 
 	public long getId() {
@@ -70,10 +78,4 @@ public class DbUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	@Override
-	public String toString() {
-		return "id=" + id + ", name=" + name + ", fisNum=" + fisNum + ", password=" + password;
-	}
-
 }

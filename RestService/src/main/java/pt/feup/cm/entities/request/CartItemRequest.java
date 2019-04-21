@@ -4,7 +4,16 @@ public class CartItemRequest extends BaseRequest {
 
 	private Integer productId;
 	private Integer number;
-	private Integer userId; // TODO remove when use UserSession
+
+	
+	public CartItemRequest() {
+	}
+
+	public CartItemRequest(Integer productId, Integer number) {
+		super();
+		this.productId = productId;
+		this.number = number;
+	}
 
 	public Integer getProductId() {
 		return productId;
@@ -20,13 +29,5 @@ public class CartItemRequest extends BaseRequest {
 
 	public void setNumber(Integer number) {
 		this.number = number;
-	}
-
-	public Integer getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Integer userId) {
-		this.userId = userId;
 	}
 }

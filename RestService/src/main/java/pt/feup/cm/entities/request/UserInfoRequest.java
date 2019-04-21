@@ -9,19 +9,26 @@ public class UserInfoRequest extends BaseRequest {
 	private String fiscalNumber;
 	private String password;
 	private Card card;
-	// rsaKey - in request header
+	private String publicRsaKey;
 
 	public UserInfoRequest() {
 		super();
 	}
 
-	public UserInfoRequest(String name, String address, String fiscalNumber, String password, Card card) {
+	public UserInfoRequest(String name, String address, String fiscalNumber, String password, Card card, String publicRsaKey) {
 		super();
 		this.name = name;
 		this.address = address;
 		this.fiscalNumber = fiscalNumber;
 		this.password = password;
 		this.card = card;
+		this.publicRsaKey = publicRsaKey;
+	}
+	
+	public UserInfoRequest(String name, String password) {
+		super();
+		this.name = name;
+		this.password = password;
 	}
 
 	public String getName() {
@@ -64,10 +71,17 @@ public class UserInfoRequest extends BaseRequest {
 		this.card = card;
 	}
 
+	public String getPublicRsaKey() {
+		return publicRsaKey;
+	}
+
+	public void setPublicRsaKey(String publicRsaKey) {
+		this.publicRsaKey = publicRsaKey;
+	}
+
 	@Override
 	public String toString() {
 		return "UserInfoRequest [name=" + name + ", address=" + address + ", fiscalNumber=" + fiscalNumber
-				+ ", password=" + password + ", card=" + card + "]";
+				+ ", password=" + password + ", card=" + card + ", publicRsaKey=" + publicRsaKey + "]";
 	}
-
 }

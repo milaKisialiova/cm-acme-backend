@@ -3,8 +3,9 @@ package pt.feup.cm.service;
 import java.math.BigDecimal;
 
 import pt.feup.cm.config.AppConfig;
+import pt.feup.cm.config.AuthTokenGenerator;
 import pt.feup.cm.config.PaymentRandomizer;
-import pt.feup.cm.config.TokenGenerator;
+import pt.feup.cm.config.PaymentTokenGenerator;
 import pt.feup.cm.entities.response.BaseResponse;
 import pt.feup.cm.entities.response.PaymentInfoResponse;
 import pt.feup.cm.entities.response.ReceiptResponse;
@@ -20,13 +21,17 @@ import pt.feup.cm.warehouse.exception.ServiceException;
 
 public class PaymentService extends BaseService {
 
-	public PaymentInfoResponse doPayment(Integer userId) {
+	AuthTokenGenerator tokenGenerator = new AuthTokenGenerator();
+	
+	public PaymentInfoResponse doPayment(String token) {
 		if (AppConfig.USE_MOCKS_DO_PAYMENT) {
 			return MockUtils.pay();
 		}
 		PaymentInfoResponse rsp = null;
 		try {
-			DbUser user = getWarehouseManager().getUser(userId);
+			token = tokenGenerator.resolveToken(token);
+			tokenGenerator.validateToken(token);
+			DbUser user = getWarehouseManager().getUserByName(tokenGenerator.getUsername(token));
 			DbCart dbCart = getWarehouseManager().getUserActiveCart(user);
 			DbPayment dbPayment = doPayment(dbCart);
 			rsp = new PaymentInfoResponse(dbPayment.getToken(), dbPayment.getDate(), dbPayment.getAmount(),
@@ -61,7 +66,7 @@ public class PaymentService extends BaseService {
 		if (!PaymentRandomizer.isSuccess()) {
 			throw new BusinessException(ErrorCode.CODE_PAYMENT);
 		}
-		return getWarehouseManager().doPayment(TokenGenerator.generate(), dbCart.getId(), dbCart.getUserId(),
+		return getWarehouseManager().doPayment(PaymentTokenGenerator.generate(), dbCart.getId(), dbCart.getUserId(),
 				getCartTotalPrice(dbCart).doubleValue(), buildReceipt(dbCart));
 
 	}

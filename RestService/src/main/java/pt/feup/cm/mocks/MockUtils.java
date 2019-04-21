@@ -11,6 +11,7 @@ import pt.feup.cm.entities.response.CartResponse;
 import pt.feup.cm.entities.response.PaymentInfoResponse;
 import pt.feup.cm.entities.response.ProductInfoResponse;
 import pt.feup.cm.entities.response.ReceiptResponse;
+import pt.feup.cm.entities.response.TokenResponse;
 
 public class MockUtils {
 
@@ -18,8 +19,8 @@ public class MockUtils {
 		return new BaseResponse();
 	}
 	
-	public static BaseResponse login() {
-		return new BaseResponse();
+	public static TokenResponse login() {
+		return new TokenResponse("token-test");
 	}
 
 	public static ProductInfoResponse getProduct() {
