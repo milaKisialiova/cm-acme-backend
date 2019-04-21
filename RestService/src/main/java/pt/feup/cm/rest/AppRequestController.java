@@ -54,7 +54,6 @@ public class AppRequestController {
 	}
 
 	@RequestMapping(value = "/cart/clean", method = RequestMethod.DELETE)
-	// TODO no user id, get from User Session
 	public BaseResponse cleanActiveCart(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
 		return cartService.cleanCart(token);
 	}
@@ -78,7 +77,6 @@ public class AppRequestController {
 	}
 
 	@RequestMapping(value = "/payment/do", method = RequestMethod.GET)
-	// TODO no user id, get from User Session
 	public PaymentInfoResponse doPayment(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
 		return paymentService.doPayment(token);
 	}
