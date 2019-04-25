@@ -44,7 +44,7 @@ public class AppRequestController {
 		return authorizationService.login(request.getName(), request.getPassword());
 	}
 
-	@RequestMapping(value = "/{barcode}", method = RequestMethod.GET)
+	@RequestMapping(value = "/product/{barcode}", method = RequestMethod.GET)
 	public ProductInfoResponse getProduct(@PathVariable("barcode") String barcode) {
 		return productService.getProduct(barcode);
 	}
