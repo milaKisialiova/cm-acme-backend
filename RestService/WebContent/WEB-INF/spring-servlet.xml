@@ -9,7 +9,7 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
  
-    <context:component-scan base-package="pt.feup.cm.rest" />
+    <context:component-scan base-package="pt.feup.cm" />
     <mvc:annotation-driven />
  
 </beans>

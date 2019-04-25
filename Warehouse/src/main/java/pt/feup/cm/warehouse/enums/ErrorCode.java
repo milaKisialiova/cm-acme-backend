@@ -11,29 +11,34 @@ public enum ErrorCode {
 	CODE_AUTH_VALIDATION_NAME(601),
 	CODE_AUTH_VALIDATION_PASSWORD(602),
 	CODE_AUTH_VALIDATION_FISNUM(603),
-	
 	CODE_AUTH_NAME_UNIQUE(604),
 	CODE_AUTH_FIS_NUM_UNIQUE(605),
-
 	CODE_AUTH_NOT_FOUND(606),
+	CODE_AUTH_VALIDATION_CARD_NUMBER(607),
+	CODE_AUTH_VALIDATION_CARD_VALIDITY(608),
+	CODE_AUTH_VALIDATION_CARD_VALID_DATE(609),
+	
+	AUTH_TOKEN_EXPIRED(610),
+	AUTH_TOKEN_INVALID(611),
 
 	CODE_CART(700),
 	
 	CODE_PRODUCT(800),
 	
-	CODE_PAYMENT(900);
+	CODE_PAYMENT(900),
+	CODE_PAYMENT_INVALID_TOKEN(901);
 	
-	int value;
+	Integer value;
 	
-	ErrorCode(int value) {
+	ErrorCode(Integer value) {
 		this.value = value;
 	}
 
-	public int getValue() {
+	public Integer getValue() {
 		return value;
 	}
 
-	public void setValue(int value) {
+	public void setValue(Integer value) {
 		this.value = value;
 	}
 

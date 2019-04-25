@@ -1,5 +1,6 @@
 package pt.feup.cm.warehouse.manager;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.persistence.Persistence;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 
+import pt.feup.cm.warehouse.entities.DbCard;
 import pt.feup.cm.warehouse.entities.DbCart;
 import pt.feup.cm.warehouse.entities.DbCartItem;
 import pt.feup.cm.warehouse.entities.DbPayment;
@@ -27,10 +29,13 @@ public class WarehouseManager {
 		em = Persistence.createEntityManagerFactory("WarehouseService").createEntityManager();
 	}
 
-	public DbUser addUser(String name, String password, String fiscalNumber) throws ServiceException {
+	public DbUser addUser(String name, String password, String address, String fiscalNumber, String cardHolderName,
+			String cardNumber, String cardValidity, String cardValidDate, String cardType, byte[] publicRsaKey)
+			throws ServiceException {
 		try {
 			em.getTransaction().begin();
-			DbUser dbUser = em.merge(new DbUser(name, password, fiscalNumber));
+			DbUser dbUser = em.merge(new DbUser(name, fiscalNumber, password, address, publicRsaKey));
+			DbCard dbCard = em.merge(new DbCard(cardHolderName, cardNumber, cardValidity, cardValidDate, cardType, dbUser.getId()));
 			em.getTransaction().commit();
 			return dbUser;
 		} catch (RollbackException e) {
@@ -87,20 +92,27 @@ public class WarehouseManager {
 		return em.find(DbProduct.class, productId);
 	}
 
-	public void addUserCart(long id) throws ServiceException {
+	public DbCart addUserCart(long id) throws ServiceException {
 		try {
 			em.getTransaction().begin();
-			em.merge(new DbCart(id, CartStatus.ACTIVE.getValue()));
+			DbCart dbCart = em.merge(new DbCart(id, CartStatus.ACTIVE.getValue()));
 			em.getTransaction().commit();
+			return dbCart;
 		} catch (RollbackException e) {
 			throw new ServiceException(e);
 		}
 	}
 
 	public List<DbCart> getUserCart(DbUser user) throws ServiceException {
-		TypedQuery<DbCart> namedQuery = em.createNamedQuery("Cart.getByUser", DbCart.class);
-		namedQuery.setParameter("userId", user.getId());
-		return namedQuery.getResultList();
+		try {
+			TypedQuery<DbCart> namedQuery = em.createNamedQuery("Cart.getByUser", DbCart.class);
+			namedQuery.setParameter("userId", user.getId());
+			return namedQuery.getResultList();
+		} catch (NoResultException e) {
+			List<DbCart> result = new ArrayList<DbCart>();
+			result.add(addUserCart(user.getId()));
+			return result;
+		}
 	}
 
 	public List<DbCartItem> getCartItems(DbCart cart) throws ServiceException {
@@ -128,10 +140,14 @@ public class WarehouseManager {
 	}
 
 	public DbCart getUserActiveCart(DbUser user) throws ServiceException {
-		TypedQuery<DbCart> namedQuery = em.createNamedQuery("Cart.getByStatus", DbCart.class);
-		namedQuery.setParameter("userId", user.getId());
-		namedQuery.setParameter("status", CartStatus.ACTIVE.getValue());
-		return namedQuery.getSingleResult();
+		try {
+			TypedQuery<DbCart> namedQuery = em.createNamedQuery("Cart.getByStatus", DbCart.class);
+			namedQuery.setParameter("userId", user.getId());
+			namedQuery.setParameter("status", CartStatus.ACTIVE.getValue());
+			return namedQuery.getSingleResult();
+		} catch (NoResultException e) {
+			return addUserCart(user.getId());
+		}
 	}
 
 	public void setCartPayed(DbCart dbCart) throws ServiceException {
@@ -151,7 +167,8 @@ public class WarehouseManager {
 		}
 	}
 
-	public DbPayment doPayment(String token, long cartId, long userId, Double amount, String receipt) throws ServiceException {
+	public DbPayment doPayment(String token, long cartId, long userId, Double amount, String receipt)
+			throws ServiceException {
 		try {
 			em.getTransaction().begin();
 			DbPayment dbPayment = em.merge(new DbPayment(token, cartId, amount, userId, new Date(), receipt));
@@ -161,7 +178,7 @@ public class WarehouseManager {
 			throw new ServiceException(e);
 		}
 	}
-	
+
 	public DbPayment getPayment(String token) throws ServiceException {
 		try {
 			TypedQuery<DbPayment> namedQuery = em.createNamedQuery("Payment.getByToken", DbPayment.class);

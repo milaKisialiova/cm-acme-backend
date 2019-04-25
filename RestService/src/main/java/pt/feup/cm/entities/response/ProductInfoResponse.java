@@ -7,19 +7,19 @@ public class ProductInfoResponse extends BaseResponse {
 	private Integer id;
 	private String name;
 	private BigDecimal price;
-	private String descrition;
+	private String description;
 	// private byte[] image;
 
 	public ProductInfoResponse() {
 		super();
 	}
 
-	public ProductInfoResponse(Integer id, String name, BigDecimal price, String descrition) {
+	public ProductInfoResponse(Integer id, String name, BigDecimal price, String description) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.price = price;
-		this.descrition = descrition;
+		this.description = description;
 	}
 
 	public ProductInfoResponse(int errorCode) {
@@ -42,12 +42,12 @@ public class ProductInfoResponse extends BaseResponse {
 		this.price = price;
 	}
 
-	public String getDescrition() {
-		return descrition;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDescrition(String descrition) {
-		this.descrition = descrition;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Integer getId() {
@@ -60,6 +60,6 @@ public class ProductInfoResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "ProductInfoResponse [name=" + name + ", price=" + price + ", descrition=" + descrition + "]";
+		return "ProductInfoResponse [name=" + name + ", price=" + price + ", description=" + description + "]";
 	}
 }

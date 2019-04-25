@@ -12,6 +12,7 @@
 		<class>pt.feup.cm.warehouse.entities.DbCart</class>
 		<class>pt.feup.cm.warehouse.entities.DbCartItem</class>
 		<class>pt.feup.cm.warehouse.entities.DbPayment</class>
+		<class>pt.feup.cm.warehouse.entities.DbCard</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC" />
 			<property name="javax.persistence.jdbc.url"	value="jdbc:sqlite:cm_db.db" />

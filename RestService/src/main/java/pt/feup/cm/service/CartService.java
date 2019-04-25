@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.feup.cm.config.AppConfig;
+import pt.feup.cm.config.AuthGenerator;
 import pt.feup.cm.entities.Cart;
 import pt.feup.cm.entities.CartItem;
 import pt.feup.cm.entities.Product;
@@ -20,13 +21,17 @@ import pt.feup.cm.warehouse.exception.BusinessException;
 
 public class CartService extends BaseService {
 
-	public CartResponse getCart(Integer userId) {
+	AuthGenerator tokenGenerator = new AuthGenerator();
+	
+	public CartResponse getCart(String token) {
 		if (AppConfig.USE_MOCKS_GET_CART) {
 			return MockUtils.getCart();
 		}
 		CartResponse rsp = new CartResponse(new ArrayList<Cart>());
 		try {
-			DbUser user = getWarehouseManager().getUser(userId);
+			token = tokenGenerator.resolveToken(token);
+			tokenGenerator.validateToken(token);
+			DbUser user = getWarehouseManager().getUserByName(tokenGenerator.getUsername(token));
 			List<DbCart> dbCarts = getWarehouseManager().getUserCart(user);
 			for (DbCart dbCart : dbCarts) {
 				Cart cartRsp = new Cart();
@@ -50,12 +55,14 @@ public class CartService extends BaseService {
 		return rsp;
 	}
 
-	public BaseResponse cleanCart(Integer userId) {
+	public BaseResponse cleanCart(String token) {
 		if (AppConfig.USE_MOCKS_CLEAN_CART) {
 			return MockUtils.cleanCart();
 		}
 		try {
-			DbUser user = getWarehouseManager().getUser(userId);
+			token = tokenGenerator.resolveToken(token);
+			tokenGenerator.validateToken(token);
+			DbUser user = getWarehouseManager().getUserByName(tokenGenerator.getUsername(token));
 			DbCart dbCart = getWarehouseManager().getUserActiveCart(user);
 			getWarehouseManager().deleteCartItems(dbCart);
 		} catch (BusinessException e) {
@@ -66,12 +73,14 @@ public class CartService extends BaseService {
 		return new BaseResponse();
 	}
 
-	public CartItemResponse getCartItem(Integer cartItemId) {
+	public CartItemResponse getCartItem(String token, Integer cartItemId) {
 		if (AppConfig.USE_MOCKS) {
 			return MockUtils.getCartItem();
 		}
 		CartItemResponse rsp = null;
 		try {
+			token = tokenGenerator.resolveToken(token);
+			tokenGenerator.validateToken(token);
 			DbCartItem dbCartItem = getWarehouseManager().getCartItem(cartItemId);
 			DbProduct dbProduct = getWarehouseManager().getProduct(dbCartItem.getProductId());
 			Product productRsp = new Product((int) dbProduct.getId(), dbProduct.getName(), dbProduct.getPrice(),
@@ -85,12 +94,14 @@ public class CartService extends BaseService {
 		return rsp;
 	}
 
-	public BaseResponse addToCart(Integer productId, Integer number, Integer userId) {
+	public BaseResponse addToCart(String token, Integer productId, Integer number) {
 		if (AppConfig.USE_MOCKS_CART_ADD) {
 			return MockUtils.addToCart();
 		}
 		try {
-			DbUser user = getWarehouseManager().getUser(userId);
+			token = tokenGenerator.resolveToken(token);
+			tokenGenerator.validateToken(token);
+			DbUser user = getWarehouseManager().getUserByName(tokenGenerator.getUsername(token));
 			DbCart dbCart = getWarehouseManager().getUserActiveCart(user);
 			getWarehouseManager().addCartItem(productId, number, dbCart.getId());
 		} catch (BusinessException e) {
@@ -101,11 +112,13 @@ public class CartService extends BaseService {
 		return new BaseResponse();
 	}
 
-	public BaseResponse deleteFromCart(Integer cartItemId) {
+	public BaseResponse deleteFromCart(String token, Integer cartItemId) {
 		if (AppConfig.USE_MOCKS_CART_DELETE) {
 			return MockUtils.deleteFromCart();
 		}
 		try {
+			token = tokenGenerator.resolveToken(token);
+			tokenGenerator.validateToken(token);
 			getWarehouseManager().deleteCartItem(cartItemId);
 		} catch (BusinessException e) {
 			return new BaseResponse(e.getCode().getValue());
