@@ -46,11 +46,11 @@ response:
 {"errorCode": null}
 
 
-# GET /rest/app/payment/do
+# GET /rest/app/payment/do?token=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJQYXltZW50In0.OHJ13oCbDs2Vn99IKISI7lyAFyYi47KVa4bPDSIw0WjboUhCqCL6mFAPOJgmA31ONBNd4GuSvjhgDU5DokERh5OpRX-HFE3KE4PswdbVIQc5jFUpE8SkC8Us8aOIupyHHJQXc0tDUB-EI80p8v0HR9kSNCFjUcIdZ7ZJBVsSYsc
 Header Authorization: "Bearer eyJhbGciOiJSU...-A"
 
 response:
-{"errorCode": null}
+{"errorCode":null,"token":"18248D63-EDF2-4EF3-9F35-811EC6BBE6A7_PM_1556191220600","date":1556191220744,"totalAmount":0.0,"memo":"RECEIPT\nPayment status: OK\nCard: 4*5612\nItems: \n------------------\nTotal:   0\n"}
 
 # GET /rest/printer/receipt?id=9C7FE7B3-F007-44AB-868D-D373075FD7C0_PM_1552597941104
 
