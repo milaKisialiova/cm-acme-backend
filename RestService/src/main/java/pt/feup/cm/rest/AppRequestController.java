@@ -1,6 +1,7 @@
 package pt.feup.cm.rest;
 
 import org.apache.http.HttpHeaders;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +44,8 @@ public class AppRequestController {
 		return authorizationService.login(request.getName(), request.getPassword());
 	}
 
-	@RequestMapping(value = "/product", method = RequestMethod.GET)
-	public ProductInfoResponse getProduct(@RequestParam(value = "barcode") String barcode) {
+	@RequestMapping(value = "/{barcode}", method = RequestMethod.GET)
+	public ProductInfoResponse getProduct(@PathVariable("barcode") String barcode) {
 		return productService.getProduct(barcode);
 	}
 
@@ -58,28 +59,36 @@ public class AppRequestController {
 		return cartService.cleanCart(token);
 	}
 
-	@RequestMapping(value = "/cart/item", method = RequestMethod.GET)
+	@RequestMapping(value = "/cart/item/{id}", method = RequestMethod.GET)
 	public CartItemResponse getCartItem(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token,
-			@RequestParam(value = "id") Integer cartItemId) {
+			@PathVariable(value = "id") Integer cartItemId) {
 		return cartService.getCartItem(token, cartItemId);
 	}
 
-	@RequestMapping(value = "/cart/item/add", method = RequestMethod.POST)
+	@RequestMapping(value = "/cart/item", method = RequestMethod.POST)
 	public BaseResponse addToCart(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token,
 			@RequestBody CartItemRequest request) {
 		return cartService.addToCart(token, request.getProductId(), request.getNumber());
 	}
 
-	@RequestMapping(value = "/cart/item/delete", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/cart/item/{id}", method = RequestMethod.DELETE)
 	public BaseResponse deleteFromCart(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token,
-			@RequestParam(value = "id") Integer cartItemId) {
+			@PathVariable(value = "id") Integer cartItemId) {
 		return cartService.deleteFromCart(token, cartItemId);
 	}
 
 	@RequestMapping(value = "/payment/do", method = RequestMethod.GET)
-	public PaymentInfoResponse doPayment(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
-		return paymentService.doPayment(token);
+	public PaymentInfoResponse doPayment(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token,
+			@RequestParam(value = "token") String paymentToken) {
+		return paymentService.doPayment(token, paymentToken);
 	}
+	/*
+	 * 
+	@RequestMapping(value = "/payment/do/{token}", method = RequestMethod.GET)
+	public PaymentInfoResponse doPayment(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String authToken,
+			@PathVariable(value = "token") String paymentToken) {
+		return paymentService.doPayment(authToken, paymentToken);
+	 */
 
 	/*
 	 * @RequestMapping(value = "/payment/qrcode", method = RequestMethod.GET) public

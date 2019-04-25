@@ -33,12 +33,12 @@ public class DbUser {
 	String address;
 	
 	@Column(name = "rsa")
-	String publicRsaKey;
+	byte[] publicRsaKey;
 	
 	public DbUser() {
 	}
 
-	public DbUser(String name, String fisNum, String password, String address, String publicRsaKey) {
+	public DbUser(String name, String fisNum, String password, String address, byte[] publicRsaKey) {
 		super();
 		this.name = name;
 		this.fisNum = fisNum;
@@ -78,4 +78,21 @@ public class DbUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public byte[] getPublicRsaKey() {
+		return publicRsaKey;
+	}
+
+	public void setPublicRsaKey(byte[] publicRsaKey) {
+		this.publicRsaKey = publicRsaKey;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.feup.cm.config.AppConfig;
-import pt.feup.cm.config.AuthTokenGenerator;
+import pt.feup.cm.config.AuthGenerator;
 import pt.feup.cm.entities.Cart;
 import pt.feup.cm.entities.CartItem;
 import pt.feup.cm.entities.Product;
@@ -21,7 +21,7 @@ import pt.feup.cm.warehouse.exception.BusinessException;
 
 public class CartService extends BaseService {
 
-	AuthTokenGenerator tokenGenerator = new AuthTokenGenerator();
+	AuthGenerator tokenGenerator = new AuthGenerator();
 	
 	public CartResponse getCart(String token) {
 		if (AppConfig.USE_MOCKS_GET_CART) {

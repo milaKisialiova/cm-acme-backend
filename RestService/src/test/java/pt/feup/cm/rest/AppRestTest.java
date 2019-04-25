@@ -4,48 +4,44 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Date;
 
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.RsaProvider;
 import pt.feup.cm.entities.Card;
+import pt.feup.cm.entities.Cart;
+import pt.feup.cm.entities.CartItem;
 import pt.feup.cm.entities.request.CartItemRequest;
 import pt.feup.cm.entities.request.UserInfoRequest;
 import pt.feup.cm.entities.response.BaseResponse;
+import pt.feup.cm.entities.response.CartItemResponse;
 import pt.feup.cm.entities.response.CartResponse;
+import pt.feup.cm.entities.response.PaymentInfoResponse;
 import pt.feup.cm.entities.response.ProductInfoResponse;
 import pt.feup.cm.entities.response.TokenResponse;
 import pt.feup.cm.warehouse.enums.ErrorCode;
 
-public class AppRestTest {
-
-	public final static String APP_ADDRESS_BASE = "http://192.168.56.1:5050/rest/app/";
-	private static HttpClient client = HttpClientBuilder.create().build();
-	private static ObjectMapper mapper = new ObjectMapper();
-
+public class AppRestTest extends BaseTest {
 
 	@Test
 	public void testGetProduct() throws ClientProtocolException, IOException {
-		HttpResponse httpResponse = executeGetRequest("product?barcode=1", null);
+		HttpResponse httpResponse = executeGetRequest("product/1", null);
 		
 		ProductInfoResponse rsp = retrieveResourceFromResponse(httpResponse, ProductInfoResponse.class);
 		assertNull(rsp.getErrorCode());
 		assertEquals(Integer.valueOf(1), rsp.getId());
 		assertEquals("TV samsung", rsp.getName());
 		assertEquals(BigDecimal.valueOf(1200), rsp.getPrice());
-		assertEquals("Samsung-TV22-SW00K", rsp.getDescrition());
+		assertEquals("Samsung-TV22-SW00K", rsp.getDescription());
 	}
 	
 	@Test
@@ -59,20 +55,13 @@ public class AppRestTest {
 	@Test
 	public void testSignup() throws ClientProtocolException, IOException {
 		Card card = new Card("VISA", "1234123412341234", "Vasiliy Pupkin", "0222", "123");
-		UserInfoRequest req = new UserInfoRequest("Vasiliy", "Porto", "123456789", "Abc-123", card, "123");
+		KeyPair kp = RsaProvider.generateKeyPair(1024);
+		byte[] publicKey = kp.getPublic().getEncoded();
+		UserInfoRequest req = new UserInfoRequest("Vasiliy", "Porto", "123456789", "Abc-123", card, publicKey);
 		HttpResponse httpResponse = executePostRequest("signup", req, null);
 		
 		BaseResponse rsp = retrieveResourceFromResponse(httpResponse, BaseResponse.class);
 		assertNull(rsp.getErrorCode());
-		
-		httpResponse = executePostRequest("signup", req, null);
-		rsp = retrieveResourceFromResponse(httpResponse, BaseResponse.class);
-		assertEquals(ErrorCode.CODE_AUTH_FIS_NUM_UNIQUE.getValue(), rsp.getErrorCode());
-		
-		req.setFiscalNumber("123456780");
-		httpResponse = executePostRequest("signup", req, null);
-		rsp = retrieveResourceFromResponse(httpResponse, BaseResponse.class);
-		assertEquals(ErrorCode.CODE_AUTH_NAME_UNIQUE.getValue(), rsp.getErrorCode());
 	}
 	
 	@Test
@@ -90,45 +79,116 @@ public class AppRestTest {
 		HttpResponse httpResponseLogin = executePostRequest("login", reqLogin, null);
 		TokenResponse rspLogin = retrieveResourceFromResponse(httpResponseLogin, TokenResponse.class);
 		
-		CartItemRequest reqAdd = new CartItemRequest(1, 2);
-		HttpResponse httpResponseAdd = executePostRequest("/cart/item/add", reqAdd, rspLogin.getToken());
+		Integer productId = 1;
+		Integer numberOfProducts = 1;
+		CartItemRequest reqAdd = new CartItemRequest(productId, numberOfProducts);
+		HttpResponse httpResponseAdd = executePostRequest("cart/item/add", reqAdd, rspLogin.getToken());
 		BaseResponse rspAdd = retrieveResourceFromResponse(httpResponseAdd, BaseResponse.class);
 		assertNull(rspAdd.getErrorCode());
 		
-		HttpResponse httpResponseCart = executeGetRequest("/cart", rspLogin.getToken());
+		HttpResponse httpResponseCart = executeGetRequest("cart", rspLogin.getToken());
 		CartResponse rspCart = retrieveResourceFromResponse(httpResponseCart, CartResponse.class);
 		assertNull(rspCart.getErrorCode());
-		assertEquals(rspCart.getItems().get(0).getItems().get(0).getNumber(), Integer.valueOf(2));
-		assertEquals(rspCart.getItems().get(0).getItems().get(0).getProduct().getId(), Integer.valueOf(1));
-	}
-
-	public static <T> T retrieveResourceFromResponse(HttpResponse response, Class<T> clazz) throws IOException {
-		String jsonFromResponse = EntityUtils.toString(response.getEntity());
-		ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		return mapper.readValue(jsonFromResponse, clazz);
-	}
-	
-	public static HttpResponse executeGetRequest(String urlSuffix, String token) throws ClientProtocolException, IOException {
-		HttpUriRequest request = new HttpGet(APP_ADDRESS_BASE + urlSuffix);
-		if (token != null) {
-			request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-	    }
-		return client.execute(request);
+		boolean found = false;
+		for (Cart cart : rspCart.getItems()) {
+			if (cart.getCartStatus().equals("active")) {
+				for (CartItem cartItem : cart.getItems()) {
+					if (cartItem.getProduct().getId().equals(productId)
+							&& cartItem.getNumber().equals(numberOfProducts)) {
+						found = true;
+					}
+				}
+				break;
+			}
+		}
+		assertTrue(found);
 	}
 	
-	public static HttpResponse executePostRequest(String urlSuffix, Object body, String token) throws ClientProtocolException, IOException {
-		HttpPost httpPost = new HttpPost(APP_ADDRESS_BASE + urlSuffix);
+	@Test
+	public void testRemoveFromCart() throws ClientProtocolException, IOException {
+		UserInfoRequest reqLogin = new UserInfoRequest("Vasiliy", "Abc-123");
+		HttpResponse httpResponseLogin = executePostRequest("login", reqLogin, null);
+		TokenResponse rspLogin = retrieveResourceFromResponse(httpResponseLogin, TokenResponse.class);
 		
-		httpPost.setHeader("Accept", "application/json");
-	    httpPost.setHeader("Content-type", "application/json");
-	    if (token != null) {
-	    	httpPost.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-	    }
-	    
-	    String json = mapper.writeValueAsString(body);
-	    StringEntity entity = new StringEntity(json);
-	    httpPost.setEntity(entity);
-	    
-		return client.execute(httpPost);
+		CartItemRequest reqAdd = new CartItemRequest(2, 4);
+		HttpResponse httpResponseAdd = executePostRequest("cart/item", reqAdd, rspLogin.getToken());
+		BaseResponse rspAdd = retrieveResourceFromResponse(httpResponseAdd, BaseResponse.class);
+		assertNull(rspAdd.getErrorCode());
+		
+		HttpResponse httpResponseCart = executeGetRequest("cart", rspLogin.getToken());
+		CartResponse rspCart = retrieveResourceFromResponse(httpResponseCart, CartResponse.class);
+		
+		Integer cartIdToRemove = null;
+		for (Cart cart : rspCart.getItems()) {
+			if (cart.getCartStatus().equals("active")) {
+				for (CartItem cartItem : cart.getItems()) {
+					if (cartItem.getProduct().getId().equals(2)) {
+						cartIdToRemove = cartItem.getId();
+						break;
+					}
+				}
+				break;
+			}
+		}
+		HttpResponse httpResponse = executeDeleteRequest("cart/item/" + cartIdToRemove, rspLogin.getToken());
+		
+		BaseResponse rsp = retrieveResourceFromResponse(httpResponse, BaseResponse.class);
+		assertNull(rsp.getErrorCode());
 	}
+	
+	@Test
+	public void testGetCartItem() throws ClientProtocolException, IOException {
+		UserInfoRequest reqLogin = new UserInfoRequest("Vasiliy", "Abc-123");
+		HttpResponse httpResponseLogin = executePostRequest("login", reqLogin, null);
+		TokenResponse rspLogin = retrieveResourceFromResponse(httpResponseLogin, TokenResponse.class);
+		
+		HttpResponse httpResponseCart = executeGetRequest("cart/item/3", rspLogin.getToken());
+		CartItemResponse rspCart = retrieveResourceFromResponse(httpResponseCart, CartItemResponse.class);
+		
+		assertNull(rspCart.getErrorCode());
+	}
+	
+	@Test
+	public void testCleanActiveCart() throws ClientProtocolException, IOException {
+		UserInfoRequest reqLogin = new UserInfoRequest("Vasiliy", "Abc-123");
+		HttpResponse httpResponseLogin = executePostRequest("login", reqLogin, null);
+		TokenResponse rspLogin = retrieveResourceFromResponse(httpResponseLogin, TokenResponse.class);
+		
+		HttpResponse httpResponse = executeDeleteRequest("cart/clean", rspLogin.getToken());
+		
+		BaseResponse rsp = retrieveResourceFromResponse(httpResponse, BaseResponse.class);
+		assertNull(rsp.getErrorCode());
+	}
+	
+	@Test
+	public void testDoPayment() throws ClientProtocolException, IOException {
+		
+		KeyPair kp = RsaProvider.generateKeyPair(1024);
+		PublicKey pubKey = kp.getPublic();
+		PrivateKey privKey = kp.getPrivate();
+		Claims claims = Jwts.claims().setSubject("Payment");
+		String token = Jwts.builder().setClaims(claims)
+				.signWith(SignatureAlgorithm.RS256, privKey).compact();
+		
+		Card card = new Card("VISA", "1234123412341234", "Vasiliy Pupkin", "0222", "123");
+		UserInfoRequest req = new UserInfoRequest("PaymentTest", "Porto", "123456780", "Abc-123", card, pubKey.getEncoded());
+		
+		HttpResponse httpResponse = executePostRequest("signup", req, null);
+		
+		BaseResponse rsp1 = retrieveResourceFromResponse(httpResponse, BaseResponse.class);
+		assertNull(rsp1.getErrorCode());
+		
+		UserInfoRequest reqLogin = new UserInfoRequest("PaymentTest", "Abc-123");
+		HttpResponse httpResponseLogin = executePostRequest("login", reqLogin, null);
+		TokenResponse rspLogin = retrieveResourceFromResponse(httpResponseLogin, TokenResponse.class);
+		
+		httpResponse = executeGetRequest("payment/do?token=" + token, rspLogin.getToken());
+		
+		PaymentInfoResponse rsp2 = retrieveResourceFromResponse(httpResponse, PaymentInfoResponse.class);
+		assertNull(rsp2.getErrorCode());
+		assertNotNull(rsp2.getDate());
+		assertNotNull(rsp2.getToken());
+		assertNotNull(rsp2.getMemo());
+	}
+	
 }

@@ -9,13 +9,13 @@ public class UserInfoRequest extends BaseRequest {
 	private String fiscalNumber;
 	private String password;
 	private Card card;
-	private String publicRsaKey;
+	private byte[] publicRsaKey;
 
 	public UserInfoRequest() {
 		super();
 	}
 
-	public UserInfoRequest(String name, String address, String fiscalNumber, String password, Card card, String publicRsaKey) {
+	public UserInfoRequest(String name, String address, String fiscalNumber, String password, Card card, byte[] publicRsaKey) {
 		super();
 		this.name = name;
 		this.address = address;
@@ -71,11 +71,11 @@ public class UserInfoRequest extends BaseRequest {
 		this.card = card;
 	}
 
-	public String getPublicRsaKey() {
+	public byte[] getPublicRsaKey() {
 		return publicRsaKey;
 	}
 
-	public void setPublicRsaKey(String publicRsaKey) {
+	public void setPublicRsaKey(byte[] publicRsaKey) {
 		this.publicRsaKey = publicRsaKey;
 	}
 

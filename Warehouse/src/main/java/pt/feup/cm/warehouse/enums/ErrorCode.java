@@ -25,7 +25,8 @@ public enum ErrorCode {
 	
 	CODE_PRODUCT(800),
 	
-	CODE_PAYMENT(900);
+	CODE_PAYMENT(900),
+	CODE_PAYMENT_INVALID_TOKEN(901);
 	
 	Integer value;
 	

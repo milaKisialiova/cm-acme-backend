@@ -5,10 +5,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.http.HttpHeaders;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -19,20 +15,21 @@ import pt.feup.cm.auth.AuthStorage;
 import pt.feup.cm.warehouse.enums.ErrorCode;
 import pt.feup.cm.warehouse.exception.BusinessException;
 
-public class AuthTokenGenerator {
+public class AuthGenerator {
 
 	public static PublicKey publicKey;
 	private static PrivateKey privateKey;
 
 	private static final long validityInMilliseconds = 600000;
 
-	public AuthTokenGenerator() {
+	public AuthGenerator() {
 	}
 
 	public void generateKey(String username) {
 		KeyPair kp = RsaProvider.generateKeyPair(1024);
 		publicKey = kp.getPublic();
 		privateKey = kp.getPrivate();
+		
 	}
 
 	public String createToken(String username) {

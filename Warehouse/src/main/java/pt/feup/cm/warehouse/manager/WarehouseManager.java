@@ -30,7 +30,7 @@ public class WarehouseManager {
 	}
 
 	public DbUser addUser(String name, String password, String address, String fiscalNumber, String cardHolderName,
-			String cardNumber, String cardValidity, String cardValidDate, String cardType, String publicRsaKey)
+			String cardNumber, String cardValidity, String cardValidDate, String cardType, byte[] publicRsaKey)
 			throws ServiceException {
 		try {
 			em.getTransaction().begin();

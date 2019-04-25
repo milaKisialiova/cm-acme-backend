@@ -1,7 +1,7 @@
 package pt.feup.cm.service;
 
 import pt.feup.cm.config.AppConfig;
-import pt.feup.cm.config.AuthTokenGenerator;
+import pt.feup.cm.config.AuthGenerator;
 import pt.feup.cm.config.CredentialValidator;
 import pt.feup.cm.entities.response.BaseResponse;
 import pt.feup.cm.entities.response.TokenResponse;
@@ -11,10 +11,10 @@ import pt.feup.cm.warehouse.exception.BusinessException;
 
 public class AuthorizationService extends BaseService {
 
-	AuthTokenGenerator tokenGenerator = new AuthTokenGenerator();
+	AuthGenerator tokenGenerator = new AuthGenerator();
 	
 	public BaseResponse signUp(String name, String password, String address, String fiscalNumber, String cardHolderName,
-			String cardNumber, String cardValidity, String cardValidDate, String cardType, String publicRsaKey) {
+			String cardNumber, String cardValidity, String cardValidDate, String cardType, byte[] publicRsaKey) {
 		if (AppConfig.USE_MOCKS_REGISTRATION) {
 			return MockUtils.signUp();
 		}

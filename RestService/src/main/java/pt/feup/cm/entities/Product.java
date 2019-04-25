@@ -7,16 +7,16 @@ public class Product {
 	private Integer id;
 	private String name;
 	private BigDecimal price;
-	private String descrition;
+	private String description;
 	// private byte[] image;
 
 	
-	public Product(Integer id, String name, BigDecimal price, String descrition) {
+	public Product(Integer id, String name, BigDecimal price, String description) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.price = price;
-		this.descrition = descrition;
+		this.description = description;
 	}
 
 	public Product() {
@@ -47,12 +47,12 @@ public class Product {
 		this.price = price;
 	}
 
-	public String getDescrition() {
-		return descrition;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDescrition(String descrition) {
-		this.descrition = descrition;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }
