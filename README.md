@@ -14,6 +14,11 @@ response:
 response:
 {"errorCode: null, "token":"eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJWYXNpbGl5MiIsImlhdCI6MTU1NjE4MzY3NiwiZXhwIjoxNTU2MTg0Mjc2fQ.Tuahhx1zADtlgmdd3yYOfufYstAJUkD3rQF275UsARPoQ44Z-0y6dZlIbTS_I4BVXCefk6zsVL7rWY1ejjR0Dxo12kObKgd3Ugwk-SgBq57KYqHekYHPMwRrOKvrvs2gSzNLXVoDQGvVdN4P0ELdjBZa-DVwVABfb2hv6-qKoA8"}
 
+### GET /rest/app/product/1
+
+response
+{"errorCode":null,"id":1,"name":"TV samsung","price":1200,"description":"Samsung-TV22-SW00K"}
+
 
 ### GET /rest/app/cart
 Header Authorization: "Bearer eyJhbGciOiJSU...-A"
@@ -21,19 +26,18 @@ Header Authorization: "Bearer eyJhbGciOiJSU...-A"
 response:
 {"errorCode":null,"items":[{"items":[{"id":1807,"product":{"id":1,"name":"TV samsung","price":1200,"descrition":"Samsung-TV22-SW00K"},"number":2}],"id":1806,"totalPrice":7200,"cartStatus":"active"}]}
 
-### GET /rest/app/product?barcode=1
 
-response
-{"errorCode":null,"id":1,"name":"TV samsung","price":1200,"descrition":"Samsung-TV22-SW00K"}
-
-### POST /rest/app/cart/item/add
+### POST /rest/app/cart/item
 {"productId":1,"number":2}
 Header Authorization: "Bearer eyJhbGciOiJSU...-A"
 
 response:
 {"errorCode": null}
 
-### DELETE /rest/app/cart/item/delete?id=1817
+### GET /rest/app/cart/item/1817
+Header Authorization: "Bearer eyJhbGciOiJSU...-A"
+
+### DELETE /rest/app/cart/item/1817
 Header Authorization: "Bearer eyJhbGciOiJSU...-A"
 
 response:
