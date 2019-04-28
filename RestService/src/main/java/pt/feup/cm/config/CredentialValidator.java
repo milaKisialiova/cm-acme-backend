@@ -27,8 +27,8 @@ public class CredentialValidator {
 				!cardValidity.matches("^\\d{3}$")) {
 			throw new BusinessException(ErrorCode.CODE_AUTH_VALIDATION_CARD_VALIDITY);
 		}
-		if (cardValidDate == null || cardValidDate.isEmpty() || 
-				!cardValidDate.matches("^\\d{4}$")) {
+		if (cardValidDate == null || cardValidDate.isEmpty() 
+				/*|| !cardValidDate.matches("^\\d{2}/\\d{2}$")*/) {
 			throw new BusinessException(ErrorCode.CODE_AUTH_VALIDATION_CARD_VALID_DATE);
 		}
 	}
