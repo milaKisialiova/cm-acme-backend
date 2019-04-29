@@ -79,8 +79,8 @@ public class AppRequestController {
 
 	@RequestMapping(value = "/payment/do", method = RequestMethod.GET)
 	public PaymentInfoResponse doPayment(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token,
-			@RequestParam(value = "token") String paymentToken) {
-		return paymentService.doPayment(token, paymentToken);
+			@RequestParam(value = "message") byte[] message) {
+		return paymentService.doPayment(token, message);
 	}
 	/*
 	 * 
