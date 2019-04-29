@@ -50,7 +50,7 @@ response:
 {"errorCode": null}
 
 
-### GET /rest/app/payment/do?token=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJQYXltZW50In0.OHJ13oCbDs2Vn99IKISI7lyAFyYi47KVa4bPDSIw0WjboUhCqCL6mFAPOJgmA31ONBNd4GuSvjhgDU5DokERh5OpRX-HFE3KE4PswdbVIQc5jFUpE8SkC8Us8aOIupyHHJQXc0tDUB-EI80p8v0HR9kSNCFjUcIdZ7ZJBVsSYsc
+### GET /rest/app/payment/do?message=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJQYXltZW50In0.OHJ13oCbDs2Vn99IKISI7lyAFyYi47KVa4bPDSIw0WjboUhCqCL6mFAPOJgmA31ONBNd4GuSvjhgDU5DokERh5OpRX-HFE3KE4PswdbVIQc5jFUpE8SkC8Us8aOIupyHHJQXc0tDUB-EI80p8v0HR9kSNCFjUcIdZ7ZJBVsSYsc
 Header Authorization: "Bearer eyJhbGciOiJSU...-A"
 
 response:
