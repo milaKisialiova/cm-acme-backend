@@ -41,6 +41,7 @@ public class PaymentGenerator {
             Signature sg = Signature.getInstance(SIGN_ALGORITHM);
             sg.initVerify(pubKey);
             sg.update(mess);
+
             return sg.verify(sign) && activeCartValid(message, cartItems);
 		} catch (GeneralSecurityException e) {
 			return false;
@@ -49,18 +50,29 @@ public class PaymentGenerator {
 
 	private static boolean activeCartValid(byte[] message, List<DbCartItem> cartItems) {
 		List<Integer> products = new ArrayList<>();
+		List<Integer> productNumbers = new ArrayList<>();
 		for (DbCartItem cartItem : cartItems) {
 			products.add((int) cartItem.getProductId());
+			productNumbers.add((int) cartItem.getNumber());
         }
 		int nr = message[0];
 		for (int k=1; k<=nr; k++) {
-			if (products.contains(Integer.valueOf(message[k]))) {
-				products.remove(Integer.valueOf(message[k]));
+			if ( k%2 == 1 ) {
+				if (products.contains(Integer.valueOf(message[k]))) {
+					products.remove(Integer.valueOf(message[k]));
+				} else {
+					return false;
+				}
 			} else {
-				return false;
+				if (productNumbers.contains(Integer.valueOf(message[k]))) {
+					productNumbers.remove(Integer.valueOf(message[k]));
+				} else {
+					return false;
+				}
 			}
         }
-		if (!products.isEmpty()) {
+		
+		if (!products.isEmpty() || !productNumbers.isEmpty()) {
 			return false;
 		}
 		return true;
