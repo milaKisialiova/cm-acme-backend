@@ -42,7 +42,8 @@ public class PaymentGenerator {
             sg.initVerify(pubKey);
             sg.update(mess);
 
-            return sg.verify(sign) && activeCartValid(message, cartItems);
+            boolean valid = sg.verify(sign);
+            return valid && activeCartValid(message, cartItems);
 		} catch (GeneralSecurityException e) {
 			return false;
 		}

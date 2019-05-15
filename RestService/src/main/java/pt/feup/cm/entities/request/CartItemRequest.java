@@ -30,4 +30,9 @@ public class CartItemRequest extends BaseRequest {
 	public void setNumber(Integer number) {
 		this.number = number;
 	}
+
+	@Override
+	public String toString() {
+		return "CartItemRequest [productId=" + productId + ", number=" + number + "]";
+	}
 }

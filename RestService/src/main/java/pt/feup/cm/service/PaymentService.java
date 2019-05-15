@@ -40,7 +40,7 @@ public class PaymentService extends BaseService {
 			}
 			
 			DbPayment dbPayment = doPayment(dbCart);
-			rsp = new PaymentInfoResponse(dbPayment.getToken(), dbPayment.getDate(), dbPayment.getAmount(),
+			rsp = new PaymentInfoResponse(dbPayment.getToken(), null, dbPayment.getAmount(),
 					dbPayment.getReceipt());
 			updateCarts(dbCart); // TODO when error, show Info box, not Error box to user
 		} catch (BusinessException e) {

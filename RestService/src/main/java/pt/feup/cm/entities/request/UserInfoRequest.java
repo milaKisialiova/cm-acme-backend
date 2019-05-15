@@ -82,6 +82,6 @@ public class UserInfoRequest extends BaseRequest {
 	@Override
 	public String toString() {
 		return "UserInfoRequest [name=" + name + ", address=" + address + ", fiscalNumber=" + fiscalNumber
-				+ ", password=" + password + ", card=" + card + ", publicRsaKey=" + publicRsaKey + "]";
+				+ /*", password=" + password + */ ", card=" + card + ", publicRsaKey=" + publicRsaKey + "]";
 	}
 }
