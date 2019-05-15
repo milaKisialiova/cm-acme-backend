@@ -24,7 +24,7 @@ public class PaymentService extends BaseService {
 	AuthGenerator authGenerator = new AuthGenerator();
 	PaymentGenerator paymentGenerator = new PaymentGenerator();
 	
-	public PaymentInfoResponse doPayment(String authToken, String paymentToken) {
+	public PaymentInfoResponse doPayment(String authToken, byte[] message) {
 		if (AppConfig.USE_MOCKS_DO_PAYMENT) {
 			return MockUtils.pay();
 		}
@@ -34,13 +34,13 @@ public class PaymentService extends BaseService {
 			authGenerator.validateToken(authToken);
 			
 			DbUser user = getWarehouseManager().getUserByName(authGenerator.getUsername(authToken));
-			if (!PaymentGenerator.validateToken(paymentToken, user.getPublicRsaKey())) {
+			DbCart dbCart = getWarehouseManager().getUserActiveCart(user);
+			if (!PaymentGenerator.validateToken(message, user.getPublicRsaKey(), getWarehouseManager().getCartItems(dbCart))) {
 				return new PaymentInfoResponse(ErrorCode.CODE_PAYMENT_INVALID_TOKEN.getValue());
 			}
 			
-			DbCart dbCart = getWarehouseManager().getUserActiveCart(user);
 			DbPayment dbPayment = doPayment(dbCart);
-			rsp = new PaymentInfoResponse(dbPayment.getToken(), dbPayment.getDate(), dbPayment.getAmount(),
+			rsp = new PaymentInfoResponse(dbPayment.getToken(), null, dbPayment.getAmount(),
 					dbPayment.getReceipt());
 			updateCarts(dbCart); // TODO when error, show Info box, not Error box to user
 		} catch (BusinessException e) {

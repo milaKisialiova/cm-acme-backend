@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Date;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -54,7 +53,7 @@ public class AppRestTest extends BaseTest {
 	
 	@Test
 	public void testSignup() throws ClientProtocolException, IOException {
-		Card card = new Card("VISA", "1234123412341234", "Vasiliy Pupkin", "0222", "123");
+		Card card = new Card("VISA", "1234123412341234", "Vasiliy Pupkin", "02/22", "123");
 		KeyPair kp = RsaProvider.generateKeyPair(1024);
 		byte[] publicKey = kp.getPublic().getEncoded();
 		UserInfoRequest req = new UserInfoRequest("Vasiliy", "Porto", "123456789", "Abc-123", card, publicKey);
@@ -66,7 +65,7 @@ public class AppRestTest extends BaseTest {
 	
 	@Test
 	public void testLogin() throws ClientProtocolException, IOException {
-		UserInfoRequest req = new UserInfoRequest("Vasiliy", "Abc-123");
+		UserInfoRequest req = new UserInfoRequest("Mila", "abc111");
 		HttpResponse httpResponse = executePostRequest("login", req, null);
 		
 		TokenResponse rsp = retrieveResourceFromResponse(httpResponse, TokenResponse.class);
@@ -171,18 +170,36 @@ public class AppRestTest extends BaseTest {
 				.signWith(SignatureAlgorithm.RS256, privKey).compact();
 		
 		Card card = new Card("VISA", "1234123412341234", "Vasiliy Pupkin", "0222", "123");
-		UserInfoRequest req = new UserInfoRequest("PaymentTest", "Porto", "123456780", "Abc-123", card, pubKey.getEncoded());
+		UserInfoRequest req = new UserInfoRequest("Felipe1", "Porto", "123456780", "Abc-123", card, pubKey.getEncoded());
 		
 		HttpResponse httpResponse = executePostRequest("signup", req, null);
 		
 		BaseResponse rsp1 = retrieveResourceFromResponse(httpResponse, BaseResponse.class);
 		assertNull(rsp1.getErrorCode());
 		
-		UserInfoRequest reqLogin = new UserInfoRequest("PaymentTest", "Abc-123");
+		UserInfoRequest reqLogin = new UserInfoRequest("Felipe1", "Abc-123");
 		HttpResponse httpResponseLogin = executePostRequest("login", reqLogin, null);
 		TokenResponse rspLogin = retrieveResourceFromResponse(httpResponseLogin, TokenResponse.class);
 		
 		httpResponse = executeGetRequest("payment/do?token=" + token, rspLogin.getToken());
+		
+		PaymentInfoResponse rsp2 = retrieveResourceFromResponse(httpResponse, PaymentInfoResponse.class);
+		assertNull(rsp2.getErrorCode());
+		assertNotNull(rsp2.getDate());
+		assertNotNull(rsp2.getToken());
+		assertNotNull(rsp2.getMemo());
+	}
+	
+	@Test
+	public void testDoPaymentLogin() throws ClientProtocolException, IOException {
+		
+		String token = "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJQYXltZW50In0.HE-3TLUG8wFYw90lhKCKhVzpZJzhIsHUWF8874rkBeS6VEpiYRoPOUUt1hwL5IxY9yxl034UHsNso4bw3tOLGAL-nwe0FFmmEKXsRICeaA4afbt_v4IJj_MsYh4cTEe0PU8Wf0DLE_hrvEIP-ZNAOOL8L-Hjn7HqJ3g6lSt0N6U";
+		
+		UserInfoRequest reqLogin = new UserInfoRequest("Felipe1", "Abc-123");
+		HttpResponse httpResponseLogin = executePostRequest("login", reqLogin, null);
+		TokenResponse rspLogin = retrieveResourceFromResponse(httpResponseLogin, TokenResponse.class);
+		
+		HttpResponse httpResponse = executeGetRequest("payment/do?token=" + token, rspLogin.getToken());
 		
 		PaymentInfoResponse rsp2 = retrieveResourceFromResponse(httpResponse, PaymentInfoResponse.class);
 		assertNull(rsp2.getErrorCode());
