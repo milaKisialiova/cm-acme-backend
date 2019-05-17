@@ -57,4 +57,10 @@ public class PaymentInfoResponse extends BaseResponse {
 		this.memo = memo;
 	}
 
+	@Override
+	public String toString() {
+		return "PaymentInfoResponse [token=" + token + ", date=" + date + ", totalAmount=" + totalAmount + ", memo="
+				+ memo + ", errorCode=" + getErrorCode() + "]";
+	}
+
 }

@@ -60,6 +60,6 @@ public class ProductInfoResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "ProductInfoResponse [name=" + name + ", price=" + price + ", description=" + description + "]";
+		return "ProductInfoResponse [name=" + name + ", price=" + price + ", description=" + description + ", errorCode=" + getErrorCode() + "]";
 	}
 }

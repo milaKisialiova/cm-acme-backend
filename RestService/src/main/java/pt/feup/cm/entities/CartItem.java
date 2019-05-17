@@ -39,4 +39,9 @@ public class CartItem {
 	public void setNumber(Integer number) {
 		this.number = number;
 	}
+
+	@Override
+	public String toString() {
+		return "CartItem [id=" + id + ", product=" + product + ", number=" + number + "]";
+	}
 }
