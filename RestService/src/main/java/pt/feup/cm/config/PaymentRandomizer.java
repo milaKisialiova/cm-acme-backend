@@ -16,6 +16,9 @@ public class PaymentRandomizer {
 	public static boolean isSuccess() {
 		int randomResult = r.nextInt(MAX_PERCENTAGE);
 		logger.info("PaymentRandomizer generates {}%", r.nextInt(MAX_PERCENTAGE));
+		if (randomResult >= SUCCESS_PAYMENT_PERCENTAGE) {
+			logger.info("Payment failed by random");
+		}
 		return randomResult < SUCCESS_PAYMENT_PERCENTAGE;
 	}
 }
