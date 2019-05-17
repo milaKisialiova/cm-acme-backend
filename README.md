@@ -24,7 +24,7 @@ response
 Header Authorization: "Bearer eyJhbGciOiJSU...-A"
 
 response:
-{"errorCode":null,"items":[{"items":[{"id":1807,"product":{"id":1,"name":"TV samsung","price":1200,"descrition":"Samsung-TV22-SW00K"},"number":2}],"id":1806,"totalPrice":7200,"cartStatus":"active"}]}
+{"errorCode":null,"items":[{"items":[{"id":1807,"product":{"id":1,"name":"TV samsung","price":1200,"descrition":"Samsung-TV22-SW00K"},"number":2}],"id":1806,"totalPrice":7200,"cartStatus":"payed", "date":"2019-04-01 10:30", "memo": "Receipt, total amount 4200"}]}
 
 
 ### POST /rest/app/cart/item
