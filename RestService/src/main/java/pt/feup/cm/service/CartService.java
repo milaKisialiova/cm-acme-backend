@@ -1,5 +1,6 @@
 package pt.feup.cm.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +15,10 @@ import pt.feup.cm.entities.response.CartResponse;
 import pt.feup.cm.mocks.MockUtils;
 import pt.feup.cm.warehouse.entities.DbCart;
 import pt.feup.cm.warehouse.entities.DbCartItem;
+import pt.feup.cm.warehouse.entities.DbPayment;
 import pt.feup.cm.warehouse.entities.DbProduct;
 import pt.feup.cm.warehouse.entities.DbUser;
+import pt.feup.cm.warehouse.enums.CartStatus;
 import pt.feup.cm.warehouse.enums.ErrorCode;
 import pt.feup.cm.warehouse.exception.BusinessException;
 
@@ -45,6 +48,13 @@ public class CartService extends BaseService {
 					cartRsp.getItems().add(new CartItem((int) dbCartItem.getId(), productRsp, dbCartItem.getNumber()));
 				}
 				cartRsp.calcTotalPrice();
+				if (CartStatus.PAYED.getValue().equals(dbCart.getCartStatus())) {
+					DbPayment dbPayment = getWarehouseManager().getPaymentByCart(dbCart.getId());
+					cartRsp.setMemo(dbPayment.getReceipt());
+					
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+					cartRsp.setDate(format.format(dbPayment.getDate()));
+				}
 				rsp.getItems().add(cartRsp);
 			}
 		} catch (BusinessException e) {

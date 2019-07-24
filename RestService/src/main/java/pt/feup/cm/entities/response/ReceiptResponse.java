@@ -27,7 +27,7 @@ public class ReceiptResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "ReceiptResponse [memo=" + memo + "]";
+		return "ReceiptResponse [memo=" + memo + ", errorCode=" + getErrorCode() + "]";
 	}
 
 }

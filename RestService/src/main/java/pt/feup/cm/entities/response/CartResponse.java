@@ -31,6 +31,6 @@ public class CartResponse extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "CartResponse [items=" + items + "]";
+		return "CartResponse [items=" + items + ",errorCode=" + getErrorCode() + "]";
 	}
 }

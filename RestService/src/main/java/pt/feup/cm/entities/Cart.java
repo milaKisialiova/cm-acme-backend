@@ -9,6 +9,9 @@ public class Cart {
 	private Integer id;
 	private BigDecimal totalPrice;
 	private String cartStatus;
+	private String date;
+	private String memo;
+	
 
 	public void calcTotalPrice() {
 		totalPrice = BigDecimal.ZERO;
@@ -51,10 +54,26 @@ public class Cart {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+	
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
 
 	@Override
 	public String toString() {
-		return "items=" + items + ", id=" + id + ", totalPrice=" + totalPrice + ", cartStatus=" + cartStatus;
+		return "items=" + items + ", id=" + id + ", totalPrice=" + totalPrice + ", cartStatus=" + cartStatus + ", date=" + date + ", memo=" + memo;
 	}
 
 }
